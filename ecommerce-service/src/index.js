@@ -6,7 +6,7 @@ const SequelizePlacesRepository = require('./places/repositories/sequelize-place
 const SequelizeProvidersRepository = require('./providers/repositories/sequelize-providers-repository');
 const SequelizeUsersRepository = require('./users/repositories/sequelize-users-repository');
 const SequelizeVehiclesRepository = require('./vehicles/repositories/sequelize-vehicles-repository');
-
+const SequelizeVehiclesCategoriesRepository = require('./associations/repositories/sequelize-vehicles-categories-repository');
 
 
 const sequelizeClient = new SequelizeClient();
@@ -16,6 +16,7 @@ const sequelizePlacesRepository = new SequelizePlacesRepository(sequelizeClient)
 const sequelizeProvidersRepository = new SequelizeProvidersRepository(sequelizeClient);
 const sequelizeUsersRepository = new SequelizeUsersRepository(sequelizeClient);
 const sequelizeVehiclesRepository = new SequelizeVehiclesRepository(sequelizeClient);
+const sequelizeVehiclesCategoriesRepository = new SequelizeVehiclesCategoriesRepository(sequelizeClient);
 
 
 sequelizeClient.syncDatabase();

@@ -1,6 +1,9 @@
 # Use the official Node image.
 FROM node:14
 
+# Install netcat
+RUN apt-get update && apt-get install -y netcat
+
 ENV APP_HOME /app
 
 WORKDIR $APP_HOME

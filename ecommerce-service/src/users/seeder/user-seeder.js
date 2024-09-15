@@ -1,16 +1,21 @@
-// users/seeder/user-seeder.js
-const { generateUsers } = require("../factory/user-factory");
+const {generateUsers} = require("../factory/user-factory");
 
-async function userSeeder(sequelize) {
-  const User = sequelize.models.User;
+const ROWS = 10;
+
+const userSeeder = async (sequelize) => {
+  const {User} = sequelize.models;
+
   try {
-    // Generar y poblar datos
-    const users = generateUsers(10); // Genera 10 usuarios
-    await User.bulkCreate(users, { ignoreDuplicates: true });
-    console.log('User seeded successfully');
+    const userCount = await User.count();
+
+    if (userCount < ROWS) {
+      const users = generateUsers(ROWS - userCount); // Genera los usuarios necesarios para alcanzar el límite
+      await User.bulkCreate(users, {ignoreDuplicates: true});
+      console.log('User seeded successfully');
+    }
   } catch (error) {
     console.error('Error User seeded:', error);
   }
-}
+};
 
-module.exports = { userSeeder };
+module.exports = {userSeeder};

@@ -44,7 +44,7 @@ class SequelizeCoveragesPlacesRepository {
       timestamps: false,
     };
 
-    this.coveragePlaceModel = sequelizeClient.sequelize.define('Coverage Place', columns, options);
+    this.coveragePlaceModel = sequelizeClient.sequelize.define('CoveragePlace', columns, options);
 
     // Define the associations
     this.coveragePlaceModel.associate = function(models) {

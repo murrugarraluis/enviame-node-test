@@ -38,8 +38,49 @@ class SequelizeProvidersRepository {
       timestamps: true,
     };
 
-    this.bookModel = sequelizeClient.sequelize.define('Provider', columns, options);
+    this.providerModel = sequelizeClient.sequelize.define('Provider', columns, options);
     console.log('SequelizeProvidersRepository Started');
+  }
+
+  async getAll() {
+    return await this.providerModel.findAll({raw: true});
+  }
+
+  async getOne(id) {
+
+    return await this.providerModel.findByPk(id);
+
+  }
+
+  async create(data) {
+
+    const model = await this.providerModel.create(data);
+    return model.id;
+
+  }
+
+  async update(data) {
+
+    const options = {
+      where: {
+        id: data.id,
+      }
+    };
+
+    await this.providerModel.update(data, options);
+
+  }
+
+  async delete(id) {
+
+    const options = {
+      where: {
+        id: id,
+      }
+    };
+
+    await this.providerModel.destroy(options);
+
   }
 }
 module.exports = SequelizeProvidersRepository;

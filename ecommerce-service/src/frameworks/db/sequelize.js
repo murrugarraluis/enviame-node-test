@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const {seedDatabase} = require("../../utils/seed/seed");
 
 // Conexión a una base de datos SQL por medio del ORM
 // Es agnóstico a la base de datos misma (MySQL, Postgres, etc).
@@ -36,15 +37,19 @@ class SequelizeClient {
       });
   }
 
-  syncDatabase() {
+  async syncDatabase() {
     // Crea las tablas que no existan en la base de datos en base a los modelos definidos.
-    var syncOptions = {
+    const syncOptions = {
       alter: true,
     };
-    this.sequelize.sync(syncOptions)
-      .catch(error => {
-        console.log("Couldn't sync database", error);
-      });
+
+    try {
+      await this.sequelize.sync(syncOptions);
+      console.log("Sync database successfully");
+      await seedDatabase(this.sequelize);
+    } catch (error) {
+      console.log("Couldn't sync database", error);
+    }
   }
 }
 

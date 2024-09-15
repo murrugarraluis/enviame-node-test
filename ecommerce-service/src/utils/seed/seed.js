@@ -8,6 +8,7 @@ const {coverageSeeder} = require("../../coverages/seeder/coverage-seed");
 const {priceSeeder} = require("../../coverages/seeder/price-seed");
 const {quotationSeeder} = require("../../quotations/seeder/quotation.seeder");
 const {coveragePlaceSeeder} = require("../../associations/seeder/coverage-place-seed");
+const {quotationPlaceSeeder} = require("../../associations/seeder/quotation-place-seed");
 
 async function seedDatabase(sequelize) {
 
@@ -22,6 +23,7 @@ async function seedDatabase(sequelize) {
     await priceSeeder(sequelize)
     await quotationSeeder(sequelize)
     await coveragePlaceSeeder(sequelize)
+    await quotationPlaceSeeder(sequelize)
     console.log('Database seed successfully');
   } catch (error) {
     console.error('Error seed database:', error);

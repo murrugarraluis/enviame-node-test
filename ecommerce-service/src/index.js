@@ -39,12 +39,16 @@ const ManageProvidersUsecase = require('./providers/usecases/manage-providers-us
 const createUsersRouter = require('./users/http/users-router');
 const ManageUsersUsecase = require('./users/usecases/manage-users-usecase');
 
+const createVehiclesRouter = require('./vehicles/http/vehicles-router');
+const ManageVehiclesUsecase = require('./vehicles/usecases/manage-vehicles-usecase');
+
 sequelizeClient.syncDatabase();
 
 const manageCategoriesUsecase = new ManageCategoriesUsecase(sequelizeCategoriesRepository);
 const managePlacesUsecase = new ManagePlacesUsecase(sequelizePlacesRepository);
 const manageProvidersUsecase = new ManageProvidersUsecase(sequelizeProvidersRepository);
 const manageUsersUsecase = new ManageUsersUsecase(sequelizeUsersRepository);
+const manageVehiclesUsecase = new ManageVehiclesUsecase(sequelizeVehiclesRepository);
 
 
 let routers = [
@@ -52,6 +56,7 @@ let routers = [
   createPlacesRouter(managePlacesUsecase),
   createProvidersRouter(manageProvidersUsecase),
   createUsersRouter(manageUsersUsecase),
+  createVehiclesRouter(manageVehiclesUsecase)
 ];
 
 const app = createExpressApp(routers);

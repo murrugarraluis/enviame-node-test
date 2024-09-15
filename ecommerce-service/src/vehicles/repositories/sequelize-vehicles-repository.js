@@ -68,5 +68,46 @@ class SequelizeVehiclesRepository {
     };
     console.log('SequelizeVehiclesRepository Started');
   }
+
+  async getAll() {
+    return await this.vehicleModel.findAll({raw: true});
+  }
+
+  async getOne(id) {
+
+    return await this.vehicleModel.findByPk(id);
+
+  }
+
+  async create(data) {
+
+    const model = await this.vehicleModel.create(data);
+    return model.id;
+
+  }
+
+  async update(data) {
+
+    const options = {
+      where: {
+        id: data.id,
+      }
+    };
+
+    await this.vehicleModel.update(data, options);
+
+  }
+
+  async delete(id) {
+
+    const options = {
+      where: {
+        id: id,
+      }
+    };
+
+    await this.vehicleModel.destroy(options);
+
+  }
 }
 module.exports = SequelizeVehiclesRepository;

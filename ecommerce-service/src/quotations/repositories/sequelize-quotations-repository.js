@@ -84,6 +84,47 @@ class SequelizeQuotationsRepository {
     };
     console.log('SequelizeQuotationsRepository Started');
   }
+
+  async getAll() {
+    return await this.quotationModel.findAll({raw: true});
+  }
+
+  async getOne(id) {
+
+    return await this.quotationModel.findByPk(id);
+
+  }
+
+  async create(data) {
+
+    const model = await this.quotationModel.create(data);
+    return model.id;
+
+  }
+
+  async update(data) {
+
+    const options = {
+      where: {
+        id: data.id,
+      }
+    };
+
+    await this.quotationModel.update(data, options);
+
+  }
+
+  async delete(id) {
+
+    const options = {
+      where: {
+        id: id,
+      }
+    };
+
+    await this.quotationModel.destroy(options);
+
+  }
 }
 
 module.exports = SequelizeQuotationsRepository;

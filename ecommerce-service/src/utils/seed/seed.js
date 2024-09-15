@@ -4,6 +4,7 @@ const {placeSeeder} = require("../../places/seeder/place-seeder");
 const {providerSeeder} = require("../../providers/seeder/provider-seeder");
 const {vehicleSeeder} = require("../../vehicles/seeder/vehicle-seeder");
 const {vehicleCategorySeeder} = require("../../associations/seeder/vehicle-category-seeder");
+const {coverageSeeder} = require("../../coverages/seeder/coverage-seed");
 
 async function seedDatabase(sequelize) {
 
@@ -14,6 +15,7 @@ async function seedDatabase(sequelize) {
     await userSeeder(sequelize)
     await vehicleSeeder(sequelize);
     await vehicleCategorySeeder(sequelize)
+    await coverageSeeder(sequelize)
     console.log('Database seed successfully');
   } catch (error) {
     console.error('Error seed database:', error);

@@ -30,13 +30,18 @@ const sequelizeCoveragesPlacesRepository = new SequelizeCoveragesPlacesRepositor
 const createCategoriesRouter = require('./categories/http/categories-router');
 const ManageCategoriesUsecase = require('./categories/usecases/manage-categories-usecase');
 
+const createPlacesRouter = require('./places/http/places-router');
+const ManagePlacesUsecase = require('./places/usecases/manage-places-usecase');
+
 sequelizeClient.syncDatabase();
 
 const manageCategoriesUsecase = new ManageCategoriesUsecase(sequelizeCategoriesRepository);
+const managePlacesUsecase = new ManagePlacesUsecase(sequelizePlacesRepository);
 
 
 let routers = [
-  createCategoriesRouter(manageCategoriesUsecase)
+  createCategoriesRouter(manageCategoriesUsecase),
+  createPlacesRouter(managePlacesUsecase)
 ];
 
 const app = createExpressApp(routers);

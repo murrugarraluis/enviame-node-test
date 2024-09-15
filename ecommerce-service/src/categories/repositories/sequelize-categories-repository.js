@@ -52,22 +52,22 @@ class SequelizeCategoriesRepository {
 
   }
 
-  async create(book) {
+  async create(data) {
 
-    const data = await this.categoryModel.create(book);
-    return data.id;
+    const model = await this.categoryModel.create(data);
+    return model.id;
 
   }
 
-  async update(book) {
+  async update(data) {
 
     const options = {
       where: {
-        id: book.id,
+        id: data.id,
       }
     };
 
-    await this.categoryModel.update(book, options);
+    await this.categoryModel.update(data, options);
 
   }
 

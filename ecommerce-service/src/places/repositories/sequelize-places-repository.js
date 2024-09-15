@@ -38,8 +38,48 @@ class SequelizePlacesRepository {
       timestamps: true,
     };
 
-    this.bookModel = sequelizeClient.sequelize.define('Place', columns, options);
+    this.placeModel = sequelizeClient.sequelize.define('Place', columns, options);
     console.log('SequelizePlacesRepository Started');
+  }
+  async getAll() {
+    return await this.placeModel.findAll({raw: true});
+  }
+
+  async getOne(id) {
+
+    return await this.placeModel.findByPk(id);
+
+  }
+
+  async create(data) {
+
+    const model = await this.placeModel.create(data);
+    return model.id;
+
+  }
+
+  async update(data) {
+
+    const options = {
+      where: {
+        id: data.id,
+      }
+    };
+
+    await this.placeModel.update(data, options);
+
+  }
+
+  async delete(id) {
+
+    const options = {
+      where: {
+        id: id,
+      }
+    };
+
+    await this.placeModel.destroy(options);
+
   }
 }
 module.exports = SequelizePlacesRepository;

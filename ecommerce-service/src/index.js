@@ -9,7 +9,9 @@ const SequelizeVehiclesRepository = require('./vehicles/repositories/sequelize-v
 const SequelizeVehiclesCategoriesRepository = require('./associations/repositories/sequelize-vehicles-categories-repository');
 const SequelizeCoveragesRepository = require('./coverages/repositories/sequelize-coverages-repository');
 const SequelizePricesRepository = require('./coverages/repositories/sequelize-prices-repository');
-const SequelizeQuotationRepository = require('./quotations/repositories/sequelize-quotations-repository');
+const SequelizeQuotationsRepository = require('./quotations/repositories/sequelize-quotations-repository');
+const SequelizeQuotationsPlacesRepository = require('./associations/repositories/sequelize-quotations-places-repository');
+const SequelizeCoveragesPlacesRepository = require('./associations/repositories/sequelize-coverages-places-repository');
 
 
 const sequelizeClient = new SequelizeClient();
@@ -22,7 +24,9 @@ const sequelizeVehiclesRepository = new SequelizeVehiclesRepository(sequelizeCli
 const sequelizeVehiclesCategoriesRepository = new SequelizeVehiclesCategoriesRepository(sequelizeClient);
 const sequelizeCoveragesRepository = new SequelizeCoveragesRepository(sequelizeClient);
 const sequelizePricesRepository = new SequelizePricesRepository(sequelizeClient);
-const sequelizeQuotationRepository = new SequelizeQuotationRepository(sequelizeClient);
+const sequelizeQuotationRepository = new SequelizeQuotationsRepository(sequelizeClient);
+const sequelizeQuotationsPlacesRepository = new SequelizeQuotationsPlacesRepository(sequelizeClient);
+const sequelizeCoveragesPlacesRepository = new SequelizeCoveragesPlacesRepository(sequelizeClient);
 
 sequelizeClient.syncDatabase();
 

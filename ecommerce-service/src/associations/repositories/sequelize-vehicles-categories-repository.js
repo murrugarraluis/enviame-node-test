@@ -41,7 +41,7 @@ class SequelizeVehiclesCategoriesRepository {
       timestamps: false,
     };
 
-    this.vehicleCategoryModel = sequelizeClient.sequelize.define('Vehicle', columns, options);
+    this.vehicleCategoryModel = sequelizeClient.sequelize.define('VehicleCategory', columns, options);
 
     // Define the associations
     this.vehicleCategoryModel.associate = function(models) {

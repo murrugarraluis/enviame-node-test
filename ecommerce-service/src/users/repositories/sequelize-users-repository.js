@@ -48,8 +48,49 @@ class SequelizeUsersRepository {
       timestamps: true,
     };
 
-    this.bookModel = sequelizeClient.sequelize.define('User', columns, options);
+    this.userModel = sequelizeClient.sequelize.define('User', columns, options);
     console.log('SequelizeUsersRepository Started');
+  }
+
+  async getAll() {
+    return await this.userModel.findAll({raw: true});
+  }
+
+  async getOne(id) {
+
+    return await this.userModel.findByPk(id);
+
+  }
+
+  async create(data) {
+
+    const model = await this.userModel.create(data);
+    return model.id;
+
+  }
+
+  async update(data) {
+
+    const options = {
+      where: {
+        id: data.id,
+      }
+    };
+
+    await this.userModel.update(data, options);
+
+  }
+
+  async delete(id) {
+
+    const options = {
+      where: {
+        id: id,
+      }
+    };
+
+    await this.userModel.destroy(options);
+
   }
 }
 module.exports = SequelizeUsersRepository;

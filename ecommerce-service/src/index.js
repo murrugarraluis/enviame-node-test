@@ -42,6 +42,9 @@ const ManageUsersUsecase = require('./users/usecases/manage-users-usecase');
 const createVehiclesRouter = require('./vehicles/http/vehicles-router');
 const ManageVehiclesUsecase = require('./vehicles/usecases/manage-vehicles-usecase');
 
+const createCoveragesRouter = require('./coverages/http/coverages-router');
+const ManageCoveragesUsecase = require('./coverages/usecases/manage-coverages-usecase');
+
 sequelizeClient.syncDatabase();
 
 const manageCategoriesUsecase = new ManageCategoriesUsecase(sequelizeCategoriesRepository);
@@ -49,6 +52,7 @@ const managePlacesUsecase = new ManagePlacesUsecase(sequelizePlacesRepository);
 const manageProvidersUsecase = new ManageProvidersUsecase(sequelizeProvidersRepository);
 const manageUsersUsecase = new ManageUsersUsecase(sequelizeUsersRepository);
 const manageVehiclesUsecase = new ManageVehiclesUsecase(sequelizeVehiclesRepository);
+const manageCoveragesUsecase = new ManageCoveragesUsecase(sequelizeCoveragesRepository);
 
 
 let routers = [
@@ -56,7 +60,8 @@ let routers = [
   createPlacesRouter(managePlacesUsecase),
   createProvidersRouter(manageProvidersUsecase),
   createUsersRouter(manageUsersUsecase),
-  createVehiclesRouter(manageVehiclesUsecase)
+  createVehiclesRouter(manageVehiclesUsecase),
+  createCoveragesRouter(manageCoveragesUsecase)
 ];
 
 const app = createExpressApp(routers);

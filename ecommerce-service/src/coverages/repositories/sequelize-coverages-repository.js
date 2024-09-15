@@ -72,5 +72,46 @@ class SequelizeCoveragesRepository {
     };
     console.log('SequelizeCoveragesRepository Started');
   }
+
+  async getAll() {
+    return await this.coverageModel.findAll({raw: true});
+  }
+
+  async getOne(id) {
+
+    return await this.coverageModel.findByPk(id);
+
+  }
+
+  async create(data) {
+
+    const model = await this.coverageModel.create(data);
+    return model.id;
+
+  }
+
+  async update(data) {
+
+    const options = {
+      where: {
+        id: data.id,
+      }
+    };
+
+    await this.coverageModel.update(data, options);
+
+  }
+
+  async delete(id) {
+
+    const options = {
+      where: {
+        id: id,
+      }
+    };
+
+    await this.coverageModel.destroy(options);
+
+  }
 }
 module.exports = SequelizeCoveragesRepository;

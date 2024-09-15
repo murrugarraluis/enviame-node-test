@@ -38,8 +38,50 @@ class SequelizeCategoriesRepository {
       timestamps: true,
     };
 
-    this.bookModel = sequelizeClient.sequelize.define('Category', columns, options);
+    this.categoryModel = sequelizeClient.sequelize.define('Category', columns, options);
     console.log('SequelizeCategoriesRepository Started');
   }
+
+  async getAll() {
+    return await this.categoryModel.findAll({raw: true});
+  }
+
+  async getOne(id) {
+
+    return await this.categoryModel.findByPk(id);
+
+  }
+
+  async create(book) {
+
+    const data = await this.categoryModel.create(book);
+    return data.id;
+
+  }
+
+  async update(book) {
+
+    const options = {
+      where: {
+        id: book.id,
+      }
+    };
+
+    await this.categoryModel.update(book, options);
+
+  }
+
+  async delete(id) {
+
+    const options = {
+      where: {
+        id: id,
+      }
+    };
+
+    await this.categoryModel.destroy(options);
+
+  }
 }
+
 module.exports = SequelizeCategoriesRepository;

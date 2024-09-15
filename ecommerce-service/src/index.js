@@ -13,10 +13,9 @@ const SequelizeQuotationsRepository = require('./quotations/repositories/sequeli
 const SequelizeQuotationsPlacesRepository = require('./associations/repositories/sequelize-quotations-places-repository');
 const SequelizeCoveragesPlacesRepository = require('./associations/repositories/sequelize-coverages-places-repository');
 
-
 const sequelizeClient = new SequelizeClient();
 
-const sequelizeBooksRepository = new SequelizeCategoriesRepository(sequelizeClient);
+const sequelizeCategoriesRepository = new SequelizeCategoriesRepository(sequelizeClient);
 const sequelizePlacesRepository = new SequelizePlacesRepository(sequelizeClient);
 const sequelizeProvidersRepository = new SequelizeProvidersRepository(sequelizeClient);
 const sequelizeUsersRepository = new SequelizeUsersRepository(sequelizeClient);
@@ -28,9 +27,16 @@ const sequelizeQuotationRepository = new SequelizeQuotationsRepository(sequelize
 const sequelizeQuotationsPlacesRepository = new SequelizeQuotationsPlacesRepository(sequelizeClient);
 const sequelizeCoveragesPlacesRepository = new SequelizeCoveragesPlacesRepository(sequelizeClient);
 
+const createCategoriesRouter = require('./categories/http/categories-router');
+const ManageCategoriesUsecase = require('./categories/usecases/manage-categories-usecase');
+
 sequelizeClient.syncDatabase();
 
+const manageCategoriesUsecase = new ManageCategoriesUsecase(sequelizeCategoriesRepository);
 
-let routers = [];
+
+let routers = [
+  createCategoriesRouter(manageCategoriesUsecase)
+];
 
 const app = createExpressApp(routers);

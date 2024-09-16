@@ -104,6 +104,7 @@ class SequelizeVehiclesRepository {
           },
           {
             model: this.vehicleModel.sequelize.models.Category,
+            through: { attributes: ['maximumCapacity'] },
             as: 'categories',
           }
         ]

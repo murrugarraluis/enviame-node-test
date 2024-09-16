@@ -9,7 +9,8 @@ function createQuotationsRouter(manageQuotationUsecase) {
 
   router.get("/quotations", async (req, res) => {
 
-    const quotations = await manageQuotationUsecase.getAll();
+    const { startDate, endDate } = req.query;
+    const quotations = await manageQuotationUsecase.getAll({ startDate, endDate });
     res.status(200).send(quotations);
 
   });

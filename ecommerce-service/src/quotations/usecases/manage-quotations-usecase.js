@@ -7,8 +7,8 @@ class ManageQuotationsUsecase {
     this.coverageRepository = coverageRepository;
   }
 
-  async getAll() {
-    return await this.quotationsRepository.getAll();
+  async getAll(query) {
+    return await this.quotationsRepository.getAll(query);
   }
 
   async getOne(id) {

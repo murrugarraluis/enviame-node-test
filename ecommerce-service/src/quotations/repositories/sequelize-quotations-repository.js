@@ -1,5 +1,5 @@
 const {log} = require('console');
-const {DataTypes} = require('sequelize');
+const {DataTypes, Op} = require('sequelize');
 
 class SequelizeQuotationsRepository {
   constructor(sequelizeClient, test = false) {
@@ -97,9 +97,28 @@ class SequelizeQuotationsRepository {
     console.log('SequelizeQuotationsRepository Started');
   }
 
-  async getAll() {
-    return await this.quotationModel.findAll({raw: true});
-  }
+  async getAll(query) {
+    const { startDate, endDate } = query;
+    let whereClause = {};
+
+    if (startDate && endDate) {
+      whereClause.travelDate = {
+        [Op.between]: [new Date(startDate), new Date(endDate)]
+      };
+    } else if (startDate) {
+      whereClause.travelDate = {
+        [Op.gte]: new Date(startDate)
+      };
+    } else if (endDate) {
+      whereClause.travelDate = {
+        [Op.lte]: new Date(endDate)
+      };
+    }
+
+    return await this.quotationModel.findAll({
+      where: whereClause,
+      raw: true
+    });  }
 
   async getOne(id) {
 

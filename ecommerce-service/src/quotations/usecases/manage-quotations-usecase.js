@@ -51,35 +51,43 @@ class ManageQuotationsUsecase {
     await this.quotationsRepository.delete(id);
   }
 
-  async changeStatusReserved(id, {coverageId, priceId}) {
-
+  async changeStatusReserved(id, { coverageId, priceId, category }) {
     try {
       const quotation = await this.quotationsRepository.getOne(id);
+      const coverage = await this.coverageRepository.getOne(coverageId);
 
       if (!quotation) {
-        return quotation
+        return quotation;
       }
+
+      const { userId, travelDate, passengerCount } = quotation;
 
       if (quotation.status !== 'CREADA') {
         throw new Error('Quotation cannot be updated or reserved unless it is in "CREADA" status');
       }
 
-      // además, al momento de cambiar a estado "reserva"
-      // se debe verificar si existe capacidad para realizar la reserva,
-      // en función de la capacidad del/los vehículos asociados a la cobertura
-      // y otras reservas ya realizadas.
+      const categoryVehicle = coverage?.vehicle?.categories.find(c => c.name === category);
 
+      if (!categoryVehicle) {
+        throw new Error('Invalid vehicle category provided.');
+      }
 
-      const {userId, travelDate, passengerCount, category} = quotation
-      const quotationUpdate = new Quotation(id, userId,travelDate, passengerCount, category, "RESERVA", coverageId, priceId, );
+      let { maximumCapacity } = categoryVehicle.vehicles_categories.dataValues;
+
+      if (passengerCount > maximumCapacity) {
+        throw new Error('Reservation cannot be made as the number of registered passengers exceeds the vehicle\'s maximum capacity.');
+      }
+
+      const quotationUpdate = new Quotation(
+        id, userId, travelDate, passengerCount, category, "RESERVA", coverageId, priceId
+      );
+
       await this.quotationsRepository.update(quotationUpdate);
-
-      return quotationUpdate
+      return quotationUpdate;
 
     } catch (e) {
       throw e;
     }
-
   }
 }
 

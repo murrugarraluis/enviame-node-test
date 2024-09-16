@@ -117,7 +117,21 @@ class SequelizeCoveragesRepository {
 
   async getOne(id) {
 
-    return await this.coverageModel.findByPk(id);
+    return await this.coverageModel.findByPk(id, {
+      include: [
+        {
+          model: this.coverageModel.sequelize.models.Vehicle,
+          as: 'vehicle',
+          include:[
+            {
+              model: this.coverageModel.sequelize.models.Category,
+              through: { attributes: ['maximumCapacity'] },
+              as: 'categories',
+            }
+          ]
+        }
+      ]
+    });
 
   }
 
@@ -159,6 +173,7 @@ class SequelizeCoveragesRepository {
     await this.coverageModel.destroy(options);
 
   }
+
   async search(originId, destinationId, travelDate, passengerCount, category) {
     let query = `
         SELECT c.id as id,

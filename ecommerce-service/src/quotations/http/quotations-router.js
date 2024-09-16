@@ -31,11 +31,18 @@ function createQuotationsRouter(manageQuotationUsecase) {
 
   router.post("/quotations", async (req, res) => {
 
-    validation = validateSchema(Quotation.schema, req);
+    const validation = validateSchema(Quotation.schema, req);
 
     if (validation === true) {
-      const category = await manageQuotationUsecase.create(req.body);
-      res.status(201).send(category);
+      try {
+        const quotation = await manageQuotationUsecase.create(req.body);
+        res.status(201).send(quotation);
+      } catch (error) {
+        let message = error?.original?.sqlMessage;
+        res.status(400).send({message: message || 'Oops!'});
+      }
+
+
     } else {
       res.status(422).send(validation)
     }
@@ -47,9 +54,14 @@ function createQuotationsRouter(manageQuotationUsecase) {
     validation = validateSchema(Quotation.schema, req);
 
     if (validation === true) {
-      const id = req.params.id;
-      const category = await manageQuotationUsecase.update(id, req.body);
-      res.status(200).send(category);
+      try {
+        const id = req.params.id;
+        const quotation = await manageQuotationUsecase.update(id, req.body);
+        res.status(200).send(quotation);
+      } catch (error) {
+        let message = error?.original?.sqlMessage;
+        res.status(400).send({message: message || 'Oops!'});
+      }
     } else {
       res.status(422).send(validation);
     }

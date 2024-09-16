@@ -103,20 +103,29 @@ class SequelizeQuotationsRepository {
 
   async create(data) {
 
-    const model = await this.quotationModel.create(data);
-    return model.id;
+    try {
+      const model = await this.quotationModel.create(data);
+      return model.id;
+    } catch (error) {
+      throw error;
+    }
+
 
   }
 
   async update(data) {
 
-    const options = {
-      where: {
-        id: data.id,
-      }
-    };
+    try {
+      const options = {
+        where: {
+          id: data.id,
+        }
+      };
 
-    await this.quotationModel.update(data, options);
+      await this.quotationModel.update(data, options);
+    } catch (error) {
+      throw error;
+    }
 
   }
 

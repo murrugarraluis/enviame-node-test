@@ -51,19 +51,18 @@ function createUsersRouter(manageusersUsecase) {
 
     validation = validateSchema(User.schema, req);
 
-    if (validation) {
-      res.status(422).send(validation);
+    if (validation === true) {
+      try {
+        const id = req.params.id;
+        const user = await manageusersUsecase.update(id, req.body);
+        res.status(200).send(user);
+      } catch (error) {
+        let message = error?.original?.sqlMessage;
+        res.status(400).send({message: message || 'Oops!'});
+      }
+    } else {
+      res.status(422).send(validation)
     }
-
-    try {
-      const id = req.params.id;
-      const user = await manageusersUsecase.update(id, req.body);
-      res.status(200).send(user);
-    } catch (error) {
-      let message = error?.original?.sqlMessage;
-      res.status(400).send({message: message || 'Oops!'});
-    }
-
   });
 
   router.delete("/users/:id", async (req, res) => {

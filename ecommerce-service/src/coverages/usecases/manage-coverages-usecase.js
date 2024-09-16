@@ -1,4 +1,5 @@
 const Converage = require('../entities/Coverage');
+const User = require("../../users/entities/user");
 
 class ManageCoveragesUsecase {
   constructor(coveragesRepository) {
@@ -13,22 +14,30 @@ class ManageCoveragesUsecase {
     return await this.coveragesRepository.getOne(id);
   }
 
-  async create(data) {
+  async create({name, vehicleId, providerId, departureTime, arrivalTime, duration}) {
 
-    const category = new Converage(undefined, data.name);
-    const id = await this.coveragesRepository.create(category);
-    category.id = id;
 
-    return category;
+    try {
+      const coverage = new Converage(undefined, name, vehicleId, providerId, departureTime, arrivalTime, duration);
+      const id = await this.coveragesRepository.create(coverage);
+      coverage.id = id;
+
+      return coverage;
+    } catch (error) {
+      throw error;
+    }
 
   }
 
-  async update(id, data) {
+  async update(id, {name, vehicleId, providerId, departureTime, arrivalTime, duration}) {
 
-    const category = new Converage(id, data.name);
-    await this.coveragesRepository.update(category);
-
-    return category;
+    try {
+      const category = new Converage(id, name, vehicleId, providerId, departureTime, arrivalTime, duration);
+      await this.coveragesRepository.update(category);
+      return category;
+    } catch (error) {
+      throw error;
+    }
 
   }
 

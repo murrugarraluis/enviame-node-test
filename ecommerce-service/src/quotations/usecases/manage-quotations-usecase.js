@@ -1,4 +1,5 @@
 const Quotation = require('../entities/quotation');
+const User = require("../../users/entities/user");
 
 class ManageQuotationsUsecase {
   constructor(quotationsRepository) {
@@ -13,22 +14,33 @@ class ManageQuotationsUsecase {
     return await this.quotationsRepository.getOne(id);
   }
 
-  async create(data) {
+  async create({userId, coverageId, priceId, travelDate, passengerCount, category, status}) {
 
-    const category = new Quotation(undefined, data.name);
-    const id = await this.quotationsRepository.create(category);
-    category.id = id;
+    try {
+      const quotation = new Quotation(undefined, userId, coverageId, priceId, travelDate, passengerCount, category, status);
+      const id = await this.quotationsRepository.create(quotation);
+      quotation.id = id;
 
-    return category;
+      return quotation;
+    } catch (error) {
+      throw error;
+    }
 
   }
 
-  async update(id, data) {
+  async update(id, {userId, coverageId, priceId, travelDate, passengerCount, category, status}) {
 
-    const category = new Quotation(id, data.name);
-    await this.quotationsRepository.update(category);
 
-    return category;
+    try {
+      const quotation = new Quotation(id, userId, coverageId, priceId, travelDate, passengerCount, category, status);
+      await this.quotationsRepository.update(quotation);
+
+      return quotation;
+
+      return quotation;
+    } catch (error) {
+      throw error;
+    }
 
   }
 

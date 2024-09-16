@@ -72,9 +72,9 @@ class SequelizeCoveragesRepository {
     this.coverageModel = sequelizeClient.sequelize.define('Coverage', columns, options);
 
     // Define the associations
-    this.coverageModel.associate = function(models) {
-      this.belongsTo(models.Vehicle, { foreignKey: 'vehicleId' });
-      this.belongsTo(models.Provider, { foreignKey: 'providerId' });
+    this.coverageModel.associate = function (models) {
+      this.belongsTo(models.Vehicle, {foreignKey: 'vehicleId'});
+      this.belongsTo(models.Provider, {foreignKey: 'providerId'});
     };
     console.log('SequelizeCoveragesRepository Started');
   }
@@ -91,20 +91,28 @@ class SequelizeCoveragesRepository {
 
   async create(data) {
 
-    const model = await this.coverageModel.create(data);
-    return model.id;
+    try {
+      const model = await this.coverageModel.create(data);
+      return model.id;
+    } catch (error) {
+      throw error;
+    }
 
   }
 
   async update(data) {
 
-    const options = {
-      where: {
-        id: data.id,
-      }
-    };
+    try {
+      const options = {
+        where: {
+          id: data.id,
+        }
+      };
 
-    await this.coverageModel.update(data, options);
+      await this.coverageModel.update(data, options);
+    } catch (error) {
+      throw error;
+    }
 
   }
 
@@ -120,4 +128,5 @@ class SequelizeCoveragesRepository {
 
   }
 }
+
 module.exports = SequelizeCoveragesRepository;

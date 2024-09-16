@@ -31,11 +31,16 @@ function createCoveragesRouter(manageCoveragesUsecase) {
 
   router.post("/coverages", async (req, res) => {
 
-    validation = validateSchema(Coverage.schema, req);
+    const validation = validateSchema(Coverage.schema, req);
 
     if (validation === true) {
-      const category = await manageCoveragesUsecase.create(req.body);
-      res.status(201).send(category);
+      try {
+        const coverage = await manageCoveragesUsecase.create(req.body);
+        res.status(201).send(coverage);
+      } catch (error) {
+        let message = error?.original?.sqlMessage;
+        res.status(400).send({message: message || 'Oops!'});
+      }
     } else {
       res.status(422).send(validation)
     }
@@ -44,12 +49,19 @@ function createCoveragesRouter(manageCoveragesUsecase) {
 
   router.put("/coverages/:id", async (req, res) => {
 
-    validation = validateSchema(Coverage.schema, req);
+    const validation = validateSchema(Coverage.schema, req);
 
     if (validation === true) {
-      const id = req.params.id;
-      const category = await manageCoveragesUsecase.update(id, req.body);
-      res.status(200).send(category);
+      try {
+        const id = req.params.id;
+        const coverage = await manageCoveragesUsecase.update(id, req.body);
+        res.status(200).send(coverage);
+      } catch (error) {
+        let message = error?.original?.sqlMessage;
+        res.status(400).send({message: message || 'Oops!'});
+      }
+
+
     } else {
       res.status(422).send(validation);
     }

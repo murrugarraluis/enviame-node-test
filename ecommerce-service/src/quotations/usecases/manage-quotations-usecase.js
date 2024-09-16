@@ -89,6 +89,31 @@ class ManageQuotationsUsecase {
       throw e;
     }
   }
+  async changeStatusReservedCanceled(id) {
+    try {
+      const quotation = await this.quotationsRepository.getOne(id);
+
+      if (!quotation) {
+        return quotation;
+      }
+
+      const { userId, travelDate, passengerCount,category,coverageId,priceId } = quotation;
+
+      if (quotation.status !== 'RESERVA') {
+        throw new Error('Quotation cannot be updated or reserved unless it is in "RESERVA" status');
+      }
+
+      const quotationUpdate = new Quotation(
+        id, userId, travelDate, passengerCount, category, "RESERVA_CANCELADA", coverageId, priceId
+      );
+
+      await this.quotationsRepository.update(quotationUpdate);
+      return quotationUpdate;
+
+    } catch (e) {
+      throw e;
+    }
+  }
 }
 
 module.exports = ManageQuotationsUsecase;

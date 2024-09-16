@@ -96,6 +96,26 @@ function createQuotationsRouter(manageQuotationUsecase) {
 
   });
 
+  router.put("/quotations/:id/reserved-canceled", async (req, res) => {
+
+    try {
+      const id = req.params.id;
+      const quotation = await manageQuotationUsecase.changeStatusReservedCanceled(id);
+
+      if (!quotation) {
+        res.status(404).send({
+          message: 'Not found',
+        })
+      }
+
+      res.status(200).send(quotation);
+    } catch (error) {
+      res.status(400).send({ message: error.message });
+      console.log(error)
+    }
+
+  });
+
   router.delete("/quotations/:id", async (req, res) => {
 
     const id = req.params.id;

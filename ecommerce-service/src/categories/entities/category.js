@@ -3,7 +3,14 @@ class Category {
   static schema = {
     type: "object",
     properties: {
-      name: { type: "string", errorMessage: 'must be of string type' },
+      name: {
+        type: "string",
+        minLength: 1,
+        errorMessage: {
+          type: 'must be of string type',
+          minLength: 'cannot be an empty string'
+        }
+      },
     },
     required: ["name"],
     additionalProperties: false,

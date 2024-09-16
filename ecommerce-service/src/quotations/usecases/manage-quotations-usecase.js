@@ -17,14 +17,6 @@ class ManageQuotationsUsecase {
 
   async create({userId, originId, destinationId, travelDate, passengerCount, category = null}) {
 
-    // La cotización inicialmente queda en estado "creada",
-    //   retornando un ID de cotización único y
-    //   además retorna un listado
-    // de coberturas con precios asociados (idealmente el listado entrega ID de Cobertura,
-    //   ID de precio, junto con el monto/valor $ y vehículo), en base al origen-destino y
-    // la fecha del viaje de la cotización.
-
-
     try {
       const status = 'CREADA'
       const quotation = new Quotation(undefined, userId, travelDate, passengerCount, category, status);
@@ -57,6 +49,37 @@ class ManageQuotationsUsecase {
 
   async delete(id) {
     await this.quotationsRepository.delete(id);
+  }
+
+  async changeStatusReserved(id, {coverageId, priceId}) {
+
+    try {
+      const quotation = await this.quotationsRepository.getOne(id);
+
+      if (!quotation) {
+        return quotation
+      }
+
+      if (quotation.status !== 'CREADA') {
+        throw new Error('Quotation cannot be updated or reserved unless it is in "CREADA" status');
+      }
+
+      // además, al momento de cambiar a estado "reserva"
+      // se debe verificar si existe capacidad para realizar la reserva,
+      // en función de la capacidad del/los vehículos asociados a la cobertura
+      // y otras reservas ya realizadas.
+
+
+      const {userId, travelDate, passengerCount, category} = quotation
+      const quotationUpdate = new Quotation(id, userId,travelDate, passengerCount, category, "RESERVA", coverageId, priceId, );
+      await this.quotationsRepository.update(quotationUpdate);
+
+      return quotationUpdate
+
+    } catch (e) {
+      throw e;
+    }
+
   }
 }
 

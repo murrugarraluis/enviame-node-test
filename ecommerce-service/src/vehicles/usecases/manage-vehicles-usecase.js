@@ -1,4 +1,5 @@
 const Vehicle = require('../entities/vehicle');
+const User = require("../../users/entities/user");
 
 class ManageVehiclesUsecase {
   constructor(vehiclesRepository) {
@@ -13,22 +14,29 @@ class ManageVehiclesUsecase {
     return await this.vehiclesRepository.getOne(id);
   }
 
-  async create(data) {
+  async create({brand, model, year, licensePlate, providerId}) {
 
-    const user = new Vehicle(undefined, data.name);
-    const id = await this.vehiclesRepository.create(user);
-    user.id = id;
-
-    return user;
+    try {
+      const vehicle = new Vehicle(undefined, brand, model, year, licensePlate, providerId);
+      const id = await this.vehiclesRepository.create(vehicle);
+      vehicle.id = id;
+      return vehicle;
+    } catch (error) {
+      throw error;
+    }
 
   }
 
-  async update(id, data) {
+  async update(id, {brand, model, year, licensePlate, providerId}) {
 
-    const user = new Vehicle(id, data.name);
-    await this.vehiclesRepository.update(user);
+    try {
+      const vehicle = new Vehicle(id, brand, model, year, licensePlate, providerId);
+      await this.vehiclesRepository.update(vehicle);
 
-    return user;
+      return vehicle;
+    } catch (error) {
+      throw error;
+    }
 
   }
 

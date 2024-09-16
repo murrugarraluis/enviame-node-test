@@ -3,14 +3,47 @@ class Vehicle {
   static schema = {
     type: "object",
     properties: {
-      id: { type: "integer", errorMessage: 'must be of integer type' },
-      brand: { type: "string", errorMessage: 'must be of string type' },
-      model: { type: "string", errorMessage: 'must be of string type' },
-      year: { type: "integer", errorMessage: 'must be of integer type' },
-      licensePlate: { type: "string", errorMessage: 'must be of string type' },
-      providerId: { type: "integer", errorMessage: 'must be of integer type' },
+      brand: {
+        type: "string",
+        minLength: 1,
+        errorMessage: {
+          type: 'must be of string type',
+          minLength: 'cannot be an empty string'
+        }
+      },
+      model: {
+        type: "string",
+        minLength: 1,
+        errorMessage: {
+          type: 'must be of string type',
+          minLength: 'cannot be an empty string'
+        }
+      },
+      year: {
+        type: "integer", minLength: 1,
+        errorMessage: {
+          type: 'must be of string type',
+          minLength: 'cannot be an empty string'
+        }
+      },
+      licensePlate: {
+        type: "string",
+        minLength: 1,
+        errorMessage: {
+          type: 'must be of string type',
+          minLength: 'cannot be an empty string'
+        }
+      },
+      providerId: {
+        type: "integer",
+        minLength: 1,
+        errorMessage: {
+          type: 'must be of string type',
+          minLength: 'cannot be an empty string'
+        }
+      },
     },
-    required: ["brand", "model", "year", "licensePlate"],
+    required: ["brand", "model", "year", "licensePlate", "providerId"],
     additionalProperties: false,
   }
 

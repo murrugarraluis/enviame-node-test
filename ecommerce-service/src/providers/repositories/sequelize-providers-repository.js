@@ -45,6 +45,12 @@ class SequelizeProvidersRepository {
     };
 
     this.providerModel = sequelizeClient.sequelize.define('Provider', columns, options);
+
+    // Define the associations
+    this.providerModel.associate = function (models) {
+      this.providerModel.hasMany(models.Vehicle, {foreignKey: 'providerId', as: 'Vehicle'});
+    };
+
     console.log('SequelizeProvidersRepository Started');
   }
 

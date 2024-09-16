@@ -31,18 +31,19 @@ function createUsersRouter(manageusersUsecase) {
 
   router.post("/users", async (req, res) => {
 
-    validation = validateSchema(User.schema, req);
-    if (!validation) {
+    const validation = validateSchema(User.schema, req);
+    if (validation === true) {
+      try {
+        const user = await manageusersUsecase.create(req.body);
+        res.status(201).send(user);
+      } catch (error) {
+        let message = error?.original?.sqlMessage;
+        res.status(400).send({message: message || 'Oops!'});
+      }
+    } else {
       res.status(422).send(validation)
     }
 
-    try {
-      const user = await manageusersUsecase.create(req.body);
-      res.status(201).send(user);
-    } catch (error) {
-      let message = error?.original?.sqlMessage;
-      res.status(400).send({message: message || 'Oops!'});
-    }
 
   });
 
@@ -50,9 +51,8 @@ function createUsersRouter(manageusersUsecase) {
 
     validation = validateSchema(User.schema, req);
 
-    if (!validation) {
+    if (validation) {
       res.status(422).send(validation);
-
     }
 
     try {

@@ -53,18 +53,23 @@ class SequelizeVehiclesRepository {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     };
 
     const options = {
       tableName: tableName,
       timestamps: true,
+      paranoid: true,
     };
 
     this.vehicleModel = sequelizeClient.sequelize.define('Vehicle', columns, options);
 
     // Define the associations
-    this.vehicleModel.associate = function(models) {
-      this.belongsTo(models.Provider, { foreignKey: 'providerId' });
+    this.vehicleModel.associate = function (models) {
+      this.vehicleModel.belongsTo(models.Provider, {foreignKey: 'providerId', as: 'Provider'});
     };
     console.log('SequelizeVehiclesRepository Started');
   }
@@ -81,33 +86,39 @@ class SequelizeVehiclesRepository {
 
   async create(data) {
 
-    const model = await this.vehicleModel.create(data);
-    return model.id;
+    try {
+      const model = await this.vehicleModel.create(data);
+      return model.id;
+    } catch (error) {
+      throw error;
+    }
 
   }
 
   async update(data) {
 
-    const options = {
-      where: {
-        id: data.id,
-      }
-    };
+    try {
+      const options = {
+        where: {
+          id: data.id,
+        }
+      };
 
-    await this.vehicleModel.update(data, options);
+      await this.vehicleModel.update(data, options);
+    } catch (error) {
+      throw error;
+    }
 
   }
 
   async delete(id) {
-
     const options = {
       where: {
         id: id,
       }
     };
-
     await this.vehicleModel.destroy(options);
-
   }
 }
+
 module.exports = SequelizeVehiclesRepository;

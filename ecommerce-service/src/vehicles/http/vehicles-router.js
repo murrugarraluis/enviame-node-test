@@ -31,14 +31,19 @@ function createVehiclesRouter(managevehiclesUsecase) {
 
   router.post("/vehicles", async (req, res) => {
 
-    validation = validateSchema(Vehicle.schema, req);
-
+    const validation = validateSchema(Vehicle.schema, req);
     if (validation === true) {
-      const place = await managevehiclesUsecase.create(req.body);
-      res.status(201).send(place);
+      try {
+        const vehicle = await managevehiclesUsecase.create(req.body);
+        res.status(201).send(vehicle);
+      } catch (error) {
+        let message = error?.original?.sqlMessage;
+        res.status(400).send({message: message || 'Oops!'});
+      }
     } else {
       res.status(422).send(validation)
     }
+
 
   });
 
@@ -47,9 +52,17 @@ function createVehiclesRouter(managevehiclesUsecase) {
     validation = validateSchema(Vehicle.schema, req);
 
     if (validation === true) {
-      const id = req.params.id;
-      const place = await managevehiclesUsecase.update(id, req.body);
-      res.status(200).send(place);
+      try {
+        const id = req.params.id;
+        const vehicle = await managevehiclesUsecase.update(id, req.body);
+        res.status(200).send(vehicle);
+      } catch (error) {
+        let message = error?.original?.sqlMessage;
+        res.status(400).send({message: message || 'Oops!'});
+        console.log(error)
+      }
+
+
     } else {
       res.status(422).send(validation);
     }

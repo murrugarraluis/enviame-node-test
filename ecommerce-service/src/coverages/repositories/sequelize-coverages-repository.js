@@ -71,12 +71,41 @@ class SequelizeCoveragesRepository {
 
     this.coverageModel = this.sequelizeClient.sequelize.define('Coverage', columns, options);
 
-    this.coverageModel.associate = (models) => {
-      // this.coverageModel.belongsTo(models.Vehicle, { foreignKey: 'vehicleId' });
-      // this.coverageModel.belongsTo(models.Provider, { foreignKey: 'providerId' });
-      // this.coverageModel.belongsToMany(models.CoveragePlace, { foreignKey: 'coverageId', as: 'places' });
-      // this.coverageModel.hasMany(models.Price, { foreignKey: 'coverageId', as: 'prices' });
-    };
+    // this.coverageModel.associate = (models) => {
+    //   // this.coverageModel.belongsTo(models.Vehicle, { foreignKey: 'vehicleId' });
+    //   // this.coverageModel.belongsTo(models.Provider, { foreignKey: 'providerId' });
+    //   // this.coverageModel.belongsToMany(models.CoveragePlace, { foreignKey: 'coverageId', as: 'places' });
+    //   // this.coverageModel.hasMany(models.Price, { foreignKey: 'coverageId', as: 'prices' });
+    // };
+
+
+    // this.coverageModel.belongsTo(sequelizeClient.sequelize.models.Vehicle, {
+    //   foreignKey: "vehicleId",
+    //   as: "vehicle"
+    // });
+    // this.coverageModel.belongsTo(sequelizeClient.sequelize.models.Provider, {
+    //   foreignKey: "providerId",
+    //   as: "provider"
+    // });
+
+    this.coverageModel.belongsToMany(sequelizeClient.sequelize.models.Place, {
+      as: "originPlace",
+      through: 'coverages_places',
+      foreignKey: "coverageId",
+      otherKey: "placeId",
+      timestamps: false
+    });
+    this.coverageModel.belongsToMany(sequelizeClient.sequelize.models.Place, {
+      as: "destinationPlace",
+      through: 'coverages_places',
+      foreignKey: "coverageId",
+      otherKey: "placeId",
+      timestamps: false
+    });
+    // this.coverageModel.hasMany(sequelizeClient.sequelize.models.Price, {
+    //   foreignKey: "coverageId",
+    //   as: "prices"
+    // });
 
 
     console.log('SequelizeCoveragesRepository Started');
@@ -132,59 +161,72 @@ class SequelizeCoveragesRepository {
   }
 
   async search(originId, destinationId, travelDate, passengerCount, category) {
-    const {Coverage, CoveragePlace, Price, VehicleCategory, Vehicle, Category} = this.sequelizeClient.sequelize.models
+    const {Coverage, Place, Price, VehicleCategory, Vehicle, Category} = this.sequelizeClient.sequelize.models
 
-    console.log(Coverage.associations)
     try {
       const results = await Coverage.findAll({
         include: [
           {
-            model: CoveragePlace,
-            as: 'places',
+            model: Place,
+            as: 'originPlace',  // Alias para el lugar de origen
             required: true,
-            where: {
-              [Op.or]: [
-                {placeId: originId, type: 'origin'},
-                {placeId: destinationId, type: 'destination'}
-              ]
-            }
-          },
-          {
-            model: Price,
-            as: 'prices',
-            required: true,
-            where: {
-              startDate: {[Op.lte]: travelDate},
-              endDate: {[Op.gte]: travelDate}
-            }
-          },
-          {
-            model: Vehicle,
-            as: 'vehicle',
-            include: [
-              {
-                model: VehicleCategory,
-                as: 'vehicleCategories',
-                required: true,
-                where: {
-                  maximumCapacity: {[Op.gte]: passengerCount},
-                },
-                include: [
-                  {
-                    model: Category,
-                    as: 'categories',
-                    required: true,
-                    where: {
-                      ...(category !== null && {name: category})
-                    }
-                  }
-                ]
+            through: {
+              attributes: [],  // No necesitas atributos adicionales de la tabla pivot aquí
+              where: {
+                placeId: originId,
+                type: 'ORIGEN'
               }
-            ]
+            }
+          },
+          {
+            model: Place,
+            as: 'destinationPlace',  // Alias para el lugar de destino
+            required: true,
+            through: {
+              attributes: [],  // No necesitas atributos adicionales de la tabla pivot aquí
+              where: {
+                placeId: destinationId,
+                type: 'DESTINO'
+              }
+            }
           }
+          // {
+          //   model: Price,
+          //   as: 'prices',
+          //   required: true,
+          //   where: {
+          //     startDate: {[Op.lte]: travelDate},
+          //     endDate: {[Op.gte]: travelDate}
+          //   }
+          // },
+          // {
+          //   model: Vehicle,
+          //   as: 'vehicle',
+          //   include: [
+          //     {
+          //       model: VehicleCategory,
+          //       as: 'vehicleCategories',
+          //       required: true,
+          //       where: {
+          //         maximumCapacity: {[Op.gte]: passengerCount},
+          //       },
+          //       include: [
+          //         {
+          //           model: Category,
+          //           as: 'categories',
+          //           required: true,
+          //           where: {
+          //             ...(category !== null && {name: category})
+          //           }
+          //         }
+          //       ]
+          //     }
+          //   ]
+          // }
         ],
         raw: true,
-        nest: true
+        nest: true,
+        logging: console.log
       });
 
       return results;

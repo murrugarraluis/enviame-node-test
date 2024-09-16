@@ -64,20 +64,27 @@ class SequelizeUsersRepository {
 
   async create(data) {
 
-    const model = await this.userModel.create(data);
-    return model.id;
-
+    try {
+      const model = await this.userModel.create(data);
+      return model.id;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async update(data) {
 
-    const options = {
-      where: {
-        id: data.id,
-      }
-    };
+    try {
+      const options = {
+        where: {
+          id: data.id,
+        }
+      };
 
-    await this.userModel.update(data, options);
+      await this.userModel.update(data, options);
+    } catch (error) {
+      throw error;
+    }
 
   }
 

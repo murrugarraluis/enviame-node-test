@@ -1,12 +1,13 @@
 const Ajv = require("ajv");
 const AjvErrors = require('ajv-errors');
+const addFormats = require("ajv-formats");
 
 const ajv = new Ajv({
   allErrors: true
 });
 
 AjvErrors(ajv);
-
+addFormats(ajv);
 function validateSchema(schema, req){
 
   const validate = ajv.compile(schema)

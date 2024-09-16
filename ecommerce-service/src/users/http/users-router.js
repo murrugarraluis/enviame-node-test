@@ -32,12 +32,16 @@ function createUsersRouter(manageusersUsecase) {
   router.post("/users", async (req, res) => {
 
     validation = validateSchema(User.schema, req);
-
-    if (validation === true) {
-      const place = await manageusersUsecase.create(req.body);
-      res.status(201).send(place);
-    } else {
+    if (!validation) {
       res.status(422).send(validation)
+    }
+
+    try {
+      const user = await manageusersUsecase.create(req.body);
+      res.status(201).send(user);
+    } catch (error) {
+      let message = error?.original?.sqlMessage;
+      res.status(400).send({message: message || 'Oops!'});
     }
 
   });
@@ -46,12 +50,18 @@ function createUsersRouter(manageusersUsecase) {
 
     validation = validateSchema(User.schema, req);
 
-    if (validation === true) {
-      const id = req.params.id;
-      const place = await manageusersUsecase.update(id, req.body);
-      res.status(200).send(place);
-    } else {
+    if (!validation) {
       res.status(422).send(validation);
+
+    }
+
+    try {
+      const id = req.params.id;
+      const user = await manageusersUsecase.update(id, req.body);
+      res.status(200).send(user);
+    } catch (error) {
+      let message = error?.original?.sqlMessage;
+      res.status(400).send({message: message || 'Oops!'});
     }
 
   });

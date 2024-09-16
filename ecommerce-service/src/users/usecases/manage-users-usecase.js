@@ -13,22 +13,29 @@ class ManageUsersUsecase {
     return await this.usersRepository.getOne(id);
   }
 
-  async create(data) {
+  async create({name, lastname, email, password}) {
 
-    const user = new User(undefined, data.name);
-    const id = await this.usersRepository.create(user);
-    user.id = id;
-
-    return user;
+    try {
+      const user = new User(undefined, name, lastname, email, password);
+      const id = await this.usersRepository.create(user);
+      user.id = id;
+      return user;
+    } catch (error) {
+      throw error;
+    }
 
   }
 
-  async update(id, data) {
+  async update(id, {name, lastname, email, password}) {
+    try {
 
-    const user = new User(id, data.name);
-    await this.usersRepository.update(user);
+      const user = new User(id, name, lastname, email, password);
+      await this.usersRepository.update(user);
 
-    return user;
+      return user;
+    } catch (error) {
+      throw error;
+    }
 
   }
 

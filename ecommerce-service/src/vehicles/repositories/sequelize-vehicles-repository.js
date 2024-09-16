@@ -36,13 +36,13 @@ class SequelizeVehiclesRepository {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      // providerId: {
-      //   type: DataTypes.INTEGER,
-      //   references: {
-      //     model: 'providers', // Make sure this matches the table name of your Provider model
-      //     key: 'id',
-      //   },
-      // },
+      providerId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'providers', // Make sure this matches the table name of your Provider model
+          key: 'id',
+        },
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -74,6 +74,15 @@ class SequelizeVehiclesRepository {
       as: "provider"
     });
 
+    this.vehicleModel.belongsToMany(sequelizeClient.sequelize.models.Category, {
+      as: "categories",
+      through:'vehicles_categories',
+      foreignKey: "vehicleId",
+      otherKey: "categoryId",
+      timestamps: false
+    });
+
+
     // Define the associations
     // this.vehicleModel.associate = function (models) {
     //   this.vehicleModel.belongsTo(models.Provider, {foreignKey: "providerId", as: "Provider"});
@@ -86,13 +95,23 @@ class SequelizeVehiclesRepository {
   }
 
   async getOne(id) {
-
-    return await this.vehicleModel.findByPk(id, {
-      include: {
-        model: this.vehicleModel.sequelize.models.Provider,
-        as: 'provider'
-      }
-    });
+    try {
+      return await this.vehicleModel.findByPk(id, {
+        include: [
+          {
+            model: this.vehicleModel.sequelize.models.Provider,
+            as: 'provider',
+          },
+          {
+            model: this.vehicleModel.sequelize.models.Category,
+            as: 'categories',
+          }
+        ]
+      });
+    } catch (error) {
+      console.error('Error in getOne:', error);
+      throw error;
+    }
   }
 
   async create(data) {

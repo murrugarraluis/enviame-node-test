@@ -1,5 +1,5 @@
 const {log} = require('console');
-const {DataTypes, Op} = require('sequelize');
+const {DataTypes, QueryTypes} = require('sequelize');
 
 class SequelizeCoveragesRepository {
   constructor(sequelizeClient, test = false) {
@@ -79,10 +79,10 @@ class SequelizeCoveragesRepository {
     // };
 
 
-    // this.coverageModel.belongsTo(sequelizeClient.sequelize.models.Vehicle, {
-    //   foreignKey: "vehicleId",
-    //   as: "vehicle"
-    // });
+    this.coverageModel.belongsTo(sequelizeClient.sequelize.models.Vehicle, {
+      foreignKey: "vehicleId",
+      as: "vehicle"
+    });
     // this.coverageModel.belongsTo(sequelizeClient.sequelize.models.Provider, {
     //   foreignKey: "providerId",
     //   as: "provider"
@@ -159,77 +159,38 @@ class SequelizeCoveragesRepository {
     await this.coverageModel.destroy(options);
 
   }
-
   async search(originId, destinationId, travelDate, passengerCount, category) {
-    const {Coverage, Place, Price, VehicleCategory, Vehicle, Category} = this.sequelizeClient.sequelize.models
+    let query = `
+        SELECT c.id as id,
+               p.id as priceId,
+               p.amount as amount,
+               p.currency,
+               v.brand,
+               v.model,
+               cate.name as category
+        FROM coverages c
+        INNER JOIN coverages_places cp1 ON c.id = cp1.coverageId
+        INNER JOIN coverages_places cp2 ON c.id = cp2.coverageId
+        INNER JOIN prices p on c.id = p.coverageId
+        INNER JOIN vehicles v on c.vehicleId = v.id
+        INNER JOIN vehicles_categories vc on v.id = vc.vehicleId
+        INNER JOIN categories cate on vc.categoryId = cate.id
+        WHERE (cp1.placeId = :originId AND cp1.type = 'ORIGEN')
+          AND (cp2.placeId = :destinationId AND cp2.type = 'DESTINO')
+          AND (:travelDate BETWEEN p.startDate AND p.endDate)
+          AND (:passengerCount <= vc.maximumCapacity)
+      `;
+    const replacements = {originId, destinationId, travelDate, passengerCount};
 
+    if (category) {
+      query += ' AND (cate.name LIKE :categoryName)';
+      replacements.categoryName = category;
+    }
     try {
-      const results = await Coverage.findAll({
-        include: [
-          {
-            model: Place,
-            as: 'originPlace',  // Alias para el lugar de origen
-            required: true,
-            through: {
-              attributes: [],  // No necesitas atributos adicionales de la tabla pivot aquí
-              where: {
-                placeId: originId,
-                type: 'ORIGEN'
-              }
-            }
-          },
-          {
-            model: Place,
-            as: 'destinationPlace',  // Alias para el lugar de destino
-            required: true,
-            through: {
-              attributes: [],  // No necesitas atributos adicionales de la tabla pivot aquí
-              where: {
-                placeId: destinationId,
-                type: 'DESTINO'
-              }
-            }
-          }
-          // {
-          //   model: Price,
-          //   as: 'prices',
-          //   required: true,
-          //   where: {
-          //     startDate: {[Op.lte]: travelDate},
-          //     endDate: {[Op.gte]: travelDate}
-          //   }
-          // },
-          // {
-          //   model: Vehicle,
-          //   as: 'vehicle',
-          //   include: [
-          //     {
-          //       model: VehicleCategory,
-          //       as: 'vehicleCategories',
-          //       required: true,
-          //       where: {
-          //         maximumCapacity: {[Op.gte]: passengerCount},
-          //       },
-          //       include: [
-          //         {
-          //           model: Category,
-          //           as: 'categories',
-          //           required: true,
-          //           where: {
-          //             ...(category !== null && {name: category})
-          //           }
-          //         }
-          //       ]
-          //     }
-          //   ]
-          // }
-        ],
-        raw: true,
-        nest: true,
-        logging: console.log
+      return await this.sequelizeClient.sequelize.query(query, {
+        replacements,
+        type: QueryTypes.SELECT
       });
-
-      return results;
     } catch (error) {
       throw new Error(`Error while searching coverages: ${error.message}`);
     }

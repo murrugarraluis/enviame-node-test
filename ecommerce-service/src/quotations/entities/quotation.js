@@ -20,6 +20,23 @@ class Quotation {
     required: ["userId", "originId", "destinationId", "travelDate", "passengerCount"],
     additionalProperties: false
   }
+  static schemaReserved = {
+    type: "object",
+    properties: {
+      coverageId: { type: "integer", minimum: 1, errorMessage: 'CoverageId must be an integer and not empty' },
+      priceId: { type: "integer", minimum: 1, errorMessage: 'PriceId must be an integer and not empty' },
+      category: {
+        type: "string",
+        enum: ["standard", "premium"],
+        errorMessage: {
+          type: 'Category must be of string type and not empty',
+          enum: 'Category must be one of [standard, premium]'
+        }
+      }
+    },
+    required: ["coverageId", "priceId", "category"],
+    additionalProperties: false,
+  };
 
   constructor(id, userId, travelDate, passengerCount, category, status, coverageId = null, priceId = null) {
     this.id = id;

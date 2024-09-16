@@ -71,20 +71,27 @@ function createQuotationsRouter(manageQuotationUsecase) {
 
   router.put("/quotations/:id/reserved", async (req, res) => {
 
-    try {
-      const id = req.params.id;
-      const quotation = await manageQuotationUsecase.changeStatusReserved(id, req.body);
 
-      if (!quotation) {
-        res.status(404).send({
-          message: 'Not found',
-        })
+    validation = validateSchema(Quotation.schemaReserved, req);
+
+    if (validation === true) {
+      try {
+        const id = req.params.id;
+        const quotation = await manageQuotationUsecase.changeStatusReserved(id, req.body);
+
+        if (!quotation) {
+          res.status(404).send({
+            message: 'Not found',
+          })
+        }
+
+        res.status(200).send(quotation);
+      } catch (error) {
+        res.status(400).send({ message: error.message });
+        console.log(error)
       }
-
-      res.status(200).send(quotation);
-    } catch (error) {
-      res.status(400).send({ message: error.message });
-      console.log(error)
+    } else {
+      res.status(422).send(validation);
     }
 
   });

@@ -844,12 +844,23 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/quotations",
+							"raw": "{{url}}/quotations?startDate=2024-09-21",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"quotations"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-09-21"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-09-22",
+									"disabled": true
+								}
 							]
 						}
 					},

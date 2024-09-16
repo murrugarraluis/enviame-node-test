@@ -36,13 +36,13 @@ class SequelizeVehiclesRepository {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      providerId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: 'providers', // Make sure this matches the table name of your Provider model
-          key: 'id',
-        },
-      },
+      // providerId: {
+      //   type: DataTypes.INTEGER,
+      //   references: {
+      //     model: 'providers', // Make sure this matches the table name of your Provider model
+      //     key: 'id',
+      //   },
+      // },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -67,10 +67,17 @@ class SequelizeVehiclesRepository {
 
     this.vehicleModel = sequelizeClient.sequelize.define('Vehicle', columns, options);
 
+    // this.vehicleModel.belongsTo(sequelizeClient.sequelize.models.Provider)
+
+    this.vehicleModel.belongsTo(sequelizeClient.sequelize.models.Provider, {
+      foreignKey: "providerId",
+      as: "provider"
+    });
+
     // Define the associations
-    this.vehicleModel.associate = function (models) {
-      this.vehicleModel.belongsTo(models.Provider, {foreignKey: 'providerId', as: 'Provider'});
-    };
+    // this.vehicleModel.associate = function (models) {
+    //   this.vehicleModel.belongsTo(models.Provider, {foreignKey: "providerId", as: "Provider"});
+    // };
     console.log('SequelizeVehiclesRepository Started');
   }
 
@@ -80,8 +87,12 @@ class SequelizeVehiclesRepository {
 
   async getOne(id) {
 
-    return await this.vehicleModel.findByPk(id);
-
+    return await this.vehicleModel.findByPk(id, {
+      include: {
+        model: this.vehicleModel.sequelize.models.Provider,
+        as: 'provider'
+      }
+    });
   }
 
   async create(data) {

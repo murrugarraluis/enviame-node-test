@@ -48,7 +48,7 @@ class SequelizeProvidersRepository {
 
     // Define the associations
     this.providerModel.associate = function (models) {
-      this.providerModel.hasMany(models.Vehicle, {foreignKey: 'providerId', as: 'Vehicle'});
+      this.providerModel.hasMany(models.Vehicle, {foreignKey: 'providerId', as: 'Vehicles'});
     };
 
     console.log('SequelizeProvidersRepository Started');

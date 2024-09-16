@@ -20,6 +20,12 @@ class SequelizeQuotationsRepository {
         primaryKey: true,
         autoIncrement: true,
       },
+      uuid: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+        unique: true,
+      },
       userId: {
         type: DataTypes.INTEGER,
         references: {
@@ -105,7 +111,7 @@ class SequelizeQuotationsRepository {
 
     try {
       const model = await this.quotationModel.create(data);
-      return model.id;
+      return model.uuid;
     } catch (error) {
       throw error;
     }

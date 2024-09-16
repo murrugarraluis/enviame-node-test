@@ -56,7 +56,7 @@ const manageProvidersUsecase = new ManageProvidersUsecase(sequelizeProvidersRepo
 const manageUsersUsecase = new ManageUsersUsecase(sequelizeUsersRepository);
 const manageVehiclesUsecase = new ManageVehiclesUsecase(sequelizeVehiclesRepository);
 const manageCoveragesUsecase = new ManageCoveragesUsecase(sequelizeCoveragesRepository);
-const manageQuotationsUsecase = new ManageQuotationsUsecase(sequelizeQuotationRepository);
+const manageQuotationsUsecase = new ManageQuotationsUsecase(sequelizeQuotationRepository,sequelizeCoveragesRepository);
 
 
 let routers = [

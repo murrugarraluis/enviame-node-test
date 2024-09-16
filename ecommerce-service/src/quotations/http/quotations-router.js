@@ -40,6 +40,7 @@ function createQuotationsRouter(manageQuotationUsecase) {
       } catch (error) {
         let message = error?.original?.sqlMessage;
         res.status(400).send({message: message || 'Oops!'});
+        console.log(error)
       }
 
 

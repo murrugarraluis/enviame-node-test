@@ -1,5 +1,5 @@
 const {log} = require('console');
-const {DataTypes} = require('sequelize');
+const {DataTypes, Op} = require('sequelize');
 
 class SequelizeCoveragesRepository {
   constructor(sequelizeClient, test = false) {
@@ -69,13 +69,16 @@ class SequelizeCoveragesRepository {
 
     };
 
-    this.coverageModel = sequelizeClient.sequelize.define('Coverage', columns, options);
+    this.coverageModel = this.sequelizeClient.sequelize.define('Coverage', columns, options);
 
-    // Define the associations
-    this.coverageModel.associate = function (models) {
-      this.belongsTo(models.Vehicle, {foreignKey: 'vehicleId'});
-      this.belongsTo(models.Provider, {foreignKey: 'providerId'});
+    this.coverageModel.associate = (models) => {
+      // this.coverageModel.belongsTo(models.Vehicle, { foreignKey: 'vehicleId' });
+      // this.coverageModel.belongsTo(models.Provider, { foreignKey: 'providerId' });
+      // this.coverageModel.belongsToMany(models.CoveragePlace, { foreignKey: 'coverageId', as: 'places' });
+      // this.coverageModel.hasMany(models.Price, { foreignKey: 'coverageId', as: 'prices' });
     };
+
+
     console.log('SequelizeCoveragesRepository Started');
   }
 
@@ -126,6 +129,68 @@ class SequelizeCoveragesRepository {
 
     await this.coverageModel.destroy(options);
 
+  }
+
+  async search(originId, destinationId, travelDate, passengerCount, category) {
+    const {Coverage, CoveragePlace, Price, VehicleCategory, Vehicle, Category} = this.sequelizeClient.sequelize.models
+
+    console.log(Coverage.associations)
+    try {
+      const results = await Coverage.findAll({
+        include: [
+          {
+            model: CoveragePlace,
+            as: 'places',
+            required: true,
+            where: {
+              [Op.or]: [
+                {placeId: originId, type: 'origin'},
+                {placeId: destinationId, type: 'destination'}
+              ]
+            }
+          },
+          {
+            model: Price,
+            as: 'prices',
+            required: true,
+            where: {
+              startDate: {[Op.lte]: travelDate},
+              endDate: {[Op.gte]: travelDate}
+            }
+          },
+          {
+            model: Vehicle,
+            as: 'vehicle',
+            include: [
+              {
+                model: VehicleCategory,
+                as: 'vehicleCategories',
+                required: true,
+                where: {
+                  maximumCapacity: {[Op.gte]: passengerCount},
+                },
+                include: [
+                  {
+                    model: Category,
+                    as: 'categories',
+                    required: true,
+                    where: {
+                      ...(category !== null && {name: category})
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        raw: true,
+        nest: true
+      });
+
+      return results;
+    } catch (error) {
+      throw new Error(`Error while searching coverages: ${error.message}`);
+    }
   }
 }
 

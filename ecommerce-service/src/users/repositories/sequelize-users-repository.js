@@ -41,6 +41,11 @@ class SequelizeUsersRepository {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        paranoid: true,
+      },
     };
 
     const options = {

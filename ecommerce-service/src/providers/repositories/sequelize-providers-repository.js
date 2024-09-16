@@ -31,11 +31,17 @@ class SequelizeProvidersRepository {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     };
 
     const options = {
       tableName: tableName,
       timestamps: true,
+      paranoid: true,
+
     };
 
     this.providerModel = sequelizeClient.sequelize.define('Provider', columns, options);

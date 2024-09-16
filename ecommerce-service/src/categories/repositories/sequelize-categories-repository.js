@@ -31,11 +31,16 @@ class SequelizeCategoriesRepository {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     };
 
     const options = {
       tableName: tableName,
       timestamps: true,
+      paranoid: true,
     };
 
     this.categoryModel = sequelizeClient.sequelize.define('Category', columns, options);

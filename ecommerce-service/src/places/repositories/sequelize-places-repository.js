@@ -31,11 +31,17 @@ class SequelizePlacesRepository {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     };
 
     const options = {
       tableName: tableName,
       timestamps: true,
+      paranoid: true,
+
     };
 
     this.placeModel = sequelizeClient.sequelize.define('Place', columns, options);
